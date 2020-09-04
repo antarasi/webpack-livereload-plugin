@@ -11,6 +11,7 @@ function LiveReloadPlugin(options) {
   this.port = typeof this.options.port === 'number' ? this.options.port : this.defaultPort;
   this.ignore = this.options.ignore || null;
   this.quiet = this.options.quiet || false;
+  this.force = this.options.force || false;
   this.useSourceHash = this.options.useSourceHash || false;
   // Random alphanumeric string appended to id to allow multiple instances of live reload
   this.instanceId = crypto.randomBytes(8).toString('hex');
@@ -119,7 +120,9 @@ LiveReloadPlugin.prototype.done = function done(stats) {
       })
   ;
 
-  if (this.isRunning && (hash !== this.lastHash || !arraysEqual(childHashes, this.lastChildHashes)) && include.length > 0) {
+  if (this.isRunning
+      && (hash !== this.lastHash || !arraysEqual(childHashes, this.lastChildHashes) || this.force)
+      && include.length > 0) {
     this.lastHash = hash;
     this.lastChildHashes = childHashes;
     setTimeout(function onTimeout() {
